@@ -1,6 +1,6 @@
 class Database :
     count      = 0
-    urlTable   = []
+    urlTable   = {}
     docIDTable = []
     prTable    = []
     refTable   = []
