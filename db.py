@@ -39,9 +39,9 @@ class Database :
         self.refTable[docID1][docID2] += 1
 
     def processRefTable(self) :
-        for i in range(0, n) :
+        for i in range(0, self.count) :
             incoming = 0
-            for j in range(0, n) :
+            for j in range(0, self.count) :
                 incoming += self.refTable[i][j]
                 self.outgoing[j] = self.refTable[i][j]
             self.incoming[i] = incoming
