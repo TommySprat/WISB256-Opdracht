@@ -21,7 +21,7 @@ class Database :
         return
 
     def pageRank(self, search) :
-        for i in range(0, n) :
+        for i in range(0, self.count) :
             self.prTable[i] = self.calcPageRank(i, search)
 
     def addURL(self, url) :
