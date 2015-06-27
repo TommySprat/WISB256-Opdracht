@@ -99,10 +99,8 @@ def crawl(url, maxpages):
     print(db.refTable)
     db.discoverLinks()
     print(db.refTable)
+    return db
 
-crawl("http://www.uu.nl/", 5)
-
-#db = Database(8)
-#lp = LinkParser()
-#wp = lp.processPage("http://www.cs.uu.nl/education/vak.php?stijl=2&vak=INFOFP&jaar=2014", "UU")
-#print(wp.URL, wp.Titletext, wp.Keywords, wp.links)
+# Don't run the test when this file is imported
+if __name__ == '__main__':
+    crawl("http://www.uu.nl/", 5)

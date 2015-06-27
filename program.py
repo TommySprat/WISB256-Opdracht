@@ -1,7 +1,34 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import font
+from crawler import crawl
+import webbrowser
 
 #TODO: Styles maken voor de labelframes
+
+def open_url(url):
+    webbrowser.open_new(url)
+
+def crawlButtonClicked():
+    url = str(urlentry.get())
+    maxpages = int(pagelimitbox.get())
+    database = crawl(url, maxpages)
+
+def searchButtonClicked():
+    resultList = []
+    urls = ["www.google.nl", "www.wikipedia.com", "www.tweakers.net"]
+    for i in range(3):
+        resultList.append(ttk.Label(resultframe, text=urls[i]))
+        resultList[i].grid(column=0, row=i)
+        resultList[i].bind('<Button-1>', lambda e, url=urls[i]:open_url(url))
+        print(resultList[i]['style'])
+        print(resultList[i].winfo_class())
+        url_style_label(resultList[i])
+
+def url_style_label(label):
+    urlFont = font.Font(family='Helvetica', size=14, underline=1)
+    label.configure(font=urlFont, foreground='blue')
+
 
 root = Tk()
 root.title("Gel Goo")
@@ -30,7 +57,7 @@ lblurl.grid(column=0, row =2)
 urlentry = ttk.Entry(crawlerframe)
 urlentry.grid(column=1, row =2)
 
-crawlbutton = ttk.Button(crawlerframe, text="Crawl")
+crawlbutton = ttk.Button(crawlerframe, text="Crawl", command=crawlButtonClicked)
 crawlbutton.grid(column=2, row=2, sticky=(W))
 
 lblpagelimit = ttk.Label(crawlerframe, text="Process up to this many pages")
@@ -48,7 +75,7 @@ searchframe.grid(column=0, row=1, sticky=(N, W, E, S))
 keywordentry = ttk.Entry(searchframe)
 keywordentry.grid(column=1, row =0)
 
-searchbutton = ttk.Button(searchframe, text="Search")
+searchbutton = ttk.Button(searchframe, text="Search", command=searchButtonClicked)
 searchbutton.grid(column=2, row=0)
 
 ### RESULTS frame
