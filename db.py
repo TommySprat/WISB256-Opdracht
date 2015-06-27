@@ -6,6 +6,7 @@ class Database :
     refTable   = []
     outgoing   = []
     incoming   = []
+    webpages   = []
 
     def __init__(self, n):
         self.count = n
@@ -15,6 +16,7 @@ class Database :
         self.refTable   = [[0 for x in range(n)] for x in range(n)] 
         self.outgoing   = [0  for x in range(n)]
         self.incoming   = [0  for x in range(n)]
+        self.webpages   = []
 
     def calcPageRank(self, i, search) :
         #TODO: add pagerank
@@ -29,6 +31,12 @@ class Database :
         self.urlTable[url] = len(self.urlTable)
         self.count += 1
 
+    def addWebpage(self, webpage):
+        self.webpages.append(webpage)
+
+    def containsURL(self, url):
+        return url in self.urlTable.keys()
+
     def getDocID(self, url) :
         return self.urlTable[url]
 
@@ -37,6 +45,15 @@ class Database :
 
     def addLink(self, docID1, docID2) :
         self.refTable[docID1][docID2] += 1
+
+    def discoverLinks(self):
+        for webpage in self.webpages:
+            docID = self.getDocID(webpage.URL)
+            for url in webpage.links:
+                if not url[0] in self.urlTable.keys():
+                    continue
+                otherDocID = self.getDocID(url[0])
+                self.addLink(docID, otherDocID)
 
     def processRefTable(self) :
         for i in range(0, self.count) :
