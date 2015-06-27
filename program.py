@@ -3,8 +3,12 @@ from tkinter import ttk
 from tkinter import font
 from crawler import crawl
 import webbrowser
+from db import Database
+import threading
 
 #TODO: Styles maken voor de labelframes
+
+database = None
 
 def open_url(url):
     webbrowser.open_new(url)
@@ -12,13 +16,25 @@ def open_url(url):
 def crawlButtonClicked():
     url = str(urlentry.get())
     maxpages = int(pagelimitbox.get())
-    database = crawl(url, maxpages)
+    database = Database(maxpages)
+    pbar.configure(value=0, maximum=maxpages)
+    global crawler_thread
+    crawler_thread = threading.Thread(target=crawl, args=(url, maxpages, database, crawlerPageCallback, crawlerFinishedCallback))
+    crawler_thread.start()
+
+def crawlerPageCallback():
+    pbar.step()
+
+def crawlerFinishedCallback():
+    print("Done crawling the internet")
+    maxpages = int(pagelimitbox.get())
+    pbar.configure(value=maxpages)
 
 def searchButtonClicked():
     resultList = []
     urls = ["www.google.nl", "www.wikipedia.com", "www.tweakers.net"]
     for i in range(3):
-        resultList.append(ttk.Label(resultframe, text=urls[i]))
+        resultList.append(ttk.Label(resultframe, text=urls[i], cursor="hand2"))
         resultList[i].grid(column=0, row=i)
         resultList[i].bind('<Button-1>', lambda e, url=urls[i]:open_url(url))
         print(resultList[i]['style'])
@@ -27,7 +43,7 @@ def searchButtonClicked():
 
 def url_style_label(label):
     urlFont = font.Font(family='Helvetica', size=14, underline=1)
-    label.configure(font=urlFont, foreground='blue')
+    label.configure(font=urlFont, foreground='blue', padding=(1, 2))
 
 
 root = Tk()
@@ -63,10 +79,13 @@ crawlbutton.grid(column=2, row=2, sticky=(W))
 lblpagelimit = ttk.Label(crawlerframe, text="Process up to this many pages")
 lblpagelimit.grid(column=0, row =3)
 
-pagelimitbox = ttk.Combobox(crawlerframe, values=("10", "100", "1000"))
+pagelimitbox = ttk.Combobox(crawlerframe, values=("5", "10", "100", "1000"))
 pagelimitbox.current(0)
 pagelimitbox.grid(column=1, row=3)
 pagelimitbox.state(['readonly'])
+
+pbar = ttk.Progressbar(crawlerframe, length=400)
+pbar.grid(column=0, row=4, columnspan=2)
 
 ### SEARCH frame
 searchframe = ttk.LabelFrame(root, text="Search")

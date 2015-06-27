@@ -50,38 +50,43 @@ class LinkParser(HTMLParser):
         self.title = -1
         self.baseUrl = url
 
-        response = urlopen(url)
-        # To keep track of inside which elements we are
-        # This is needed to understand how to interpret data (raw text) when we encounter it
-        self.inTitle = False
-        self.inATag = False
+        # Soms krijg je errors (HTTP401: Unauthorized bijvoorbeeld). Negeer deze pagina's
+        try:
+            response = urlopen(url)
+            # To keep track of inside which elements we are
+            # This is needed to understand how to interpret data (raw text) when we encounter it
+            self.inTitle = False
+            self.inATag = False
 
-        # Ignore things like PDF files, images, scripts etc.. Only parse HTML pages
-        if 'text/html' in response.getheader('Content-Type'):
-            # Not all sites use the same character set, we need to decode the bytes so check which set to use
-            charset = "utf-8"
-            m = re.findall(self.charsetPattern, response.getheader('Content-Type'))
-            if(m):
-                charset = m[0].strip()
+            # Ignore things like PDF files, images, scripts etc.. Only parse HTML pages
+            if 'text/html' in response.getheader('Content-Type'):
+                # Not all sites use the same character set, we need to decode the bytes so check which set to use
+                charset = "utf-8"
+                m = re.findall(self.charsetPattern, response.getheader('Content-Type'))
+                if m:
+                    charset = m[0].strip()
 
-            htmlBytes = response.read()
-            htmlString = htmlBytes.decode(charset) # Need to prepare the data for the parser this way
-            self.feed(htmlString)
-            return Webpage(url, self.title, linkText, self.links, self.linkTexts)
-        else:
+                htmlBytes = response.read()
+                htmlString = htmlBytes.decode(charset) # Need to prepare the data for the parser this way
+                self.feed(htmlString)
+                return Webpage(url, self.title, linkText, self.links, self.linkTexts)
+            else:
+                return None
+        except:
             return None
 
-def crawl(url, maxpages):
+def crawl(url, maxpages, database, callbackPerWebpage = lambda: None, callbackOnEnd = lambda: None):
     pageQueue = [url]
     npagesVisited = 0
-    db = Database(maxpages)
+    unwantedPages = []
     parser = LinkParser()
     # Set up a "previous" webpage which we came from (we really didn't) but it's needed to start up the process
-    webpage = Webpage("No URL", "No Title", "No linktext", [], {})
+    emptyWebpage = Webpage("No URL", "No Title", "No linktext", [], {})
+    webpage = emptyWebpage
 
     while npagesVisited < maxpages and pageQueue != []:
         # Don't visit the same webpage again
-        while pageQueue != [] and db.containsURL(pageQueue[0]):
+        while pageQueue != [] and (database.containsURL(pageQueue[0]) or pageQueue[0] in unwantedPages):
             pageQueue = pageQueue[1:]
         if pageQueue == []:
             break
@@ -89,17 +94,21 @@ def crawl(url, maxpages):
         print(npagesVisited, "Visiting:", currentUrl)
 
         webpage = parser.processPage(currentUrl, webpage.linkText)
-        db.addURL(currentUrl)
-        db.addWebpage(webpage)
+        if webpage is None:
+            webpage = emptyWebpage # Next time
+            unwantedPages.append(currentUrl)
+            continue
+        database.addURL(currentUrl)
+        database.addWebpage(webpage)
         pageQueue += webpage.links
-        print(webpage.URL, webpage.Titletext, webpage.Keywords, webpage.links)
-
+        callbackPerWebpage()
         npagesVisited += 1
 
-    print(db.refTable)
-    db.discoverLinks()
-    print(db.refTable)
-    return db
+    print(database.refTable)
+    database.discoverLinks()
+    print(database.refTable)
+    callbackOnEnd()
+    return database
 
 # Don't run the test when this file is imported
 if __name__ == '__main__':
