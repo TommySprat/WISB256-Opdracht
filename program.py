@@ -1,8 +1,9 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from tkinter import font
 from crawler import crawl
 import urllib.parse
+from urllib.request import urlopen
 import webbrowser
 from db import Database
 import threading
@@ -17,6 +18,12 @@ def open_url(url):
 
 def crawlButtonClicked():
     url = str(urlentry.get())
+    try:
+        urlopen(url)
+    except:
+        messagebox.showerror(message='Please enter a valid URL such as http://www.google.com', title='Invalid URL')
+        return
+
     maxpages = int(pagelimitbox.get())
     global database
     database = Database(maxpages)
