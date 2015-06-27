@@ -56,7 +56,7 @@ class Database :
             self.barrels.append(b)
         # fill words
         for barrel in self.barrels :
-            for word in barrel.words.keys :
+            for word in barrel.words :
                 if word in self.words.keys :
                     self.words[word] = [barrel.docID]
                 else :
