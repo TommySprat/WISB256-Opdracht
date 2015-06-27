@@ -27,29 +27,36 @@ class Database :
                 v += self.prTable[j]/self.outgoing[j]
         pr = (1-d)+(d*v)
 
-    def pageRank(self) :
-        # use constant 0.85 from the original PageRank paper
-        d = 0.85
-        processRefTable()
-        fillBarrels()
+    def processRefTable(self) :
         for i in range(0, self.count) :
-            self.prTable[i] = self.calcPageRank(d, i)
-
-    def getWords(self, webpage) :
-        return [webpage.links, webpage.Titletext, webpage.Keywords, webpage.links]
+            incoming = 0
+            for j in range(0, self.count) :
+                incoming += self.refTable[i][j]
+                self.outgoing[j] = self.refTable[i][j]
+            self.incoming[i] = incoming
 
     def fillBarrels(self) :
+        # fill barrels
         for webpage in self.webpages :
-            b = Barrel(urlTable[webpage.URL])
-            for word in self.getWords(webpage) :
+            b = Barrel(self.urlTable[webpage.URL])
+            for word in webpage.Keywords :
                 b.addWord(word)
             self.barrels.append(b)
+        # fill words
         for barrel in self.barrels :
             for word in barrel.words.keys :
                 if word in self.words.keys :
                     self.words[word] = [barrel.docID]
                 else :
                     self.words[word].append(barrel.docID)
+    
+    def pageRank(self) :
+        # use constant 0.85 from the original PageRank paper
+        d = 0.85
+        self.processRefTable()
+        self.fillBarrels()
+        for i in range(0, len(self.prTable)) :
+            self.prTable[i] = self.calcPageRank(d, i)
 
     def addURL(self, url) :
         self.docIDTable.append(url)
@@ -78,11 +85,3 @@ class Database :
                     continue
                 otherDocID = self.getDocID(url)
                 self.addLink(docID, otherDocID)
-
-    def processRefTable(self) :
-        for i in range(0, self.count) :
-            incoming = 0
-            for j in range(0, self.count) :
-                incoming += self.refTable[i][j]
-                self.outgoing[j] = self.refTable[i][j]
-            self.incoming[i] = incoming
