@@ -9,6 +9,7 @@ import threading
 
 #TODO: Styles maken voor de labelframes
 
+global database
 database = None
 
 def open_url(url):
@@ -17,6 +18,7 @@ def open_url(url):
 def crawlButtonClicked():
     url = str(urlentry.get())
     maxpages = int(pagelimitbox.get())
+    global database
     database = Database(maxpages)
     pbarcrawler.configure(value=0, maximum=maxpages)
     # Crawl in a thread to keep the interface mainloop going (which allows the progress bar to be redrawn)
@@ -32,6 +34,11 @@ def crawlerFinishedCallback():
     print("Done crawling the internet")
     maxpages = int(pagelimitbox.get())
     pbarcrawler.configure(value=maxpages)
+
+    pbarpagerank.start()
+    global pagerank_thread
+    pagerank_thread = threading.Thread(target=database.pageRank)
+    pagerank_thread.start()
 
 def searchButtonClicked():
     resultList = []

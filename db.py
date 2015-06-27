@@ -1,5 +1,5 @@
 from webpage import Webpage
-import barrel
+from barrel import Barrel
 
 class Database :
     count      = 0
@@ -72,6 +72,7 @@ class Database :
         self.fillBarrels()
         for i in range(0, len(self.prTable)) :
             self.prTable[i] = self.calcPageRank(d, i)
+        print('pagerank done')
 
     def addURL(self, url) :
         self.docIDTable.append(url)
