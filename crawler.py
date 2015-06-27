@@ -29,6 +29,7 @@ class LinkParser(HTMLParser):
                 if key == 'src':
                     newUrl = parse.urljoin(self.baseUrl, value)
                     self.links = self.links + [newUrl]
+                    self.linkTexts[newUrl] = "" # Frames have no data to read this value from
 
     def handle_endtag(self, tag):
         if tag == 'title':
@@ -77,6 +78,7 @@ class LinkParser(HTMLParser):
 
 def crawl(url, maxpages, database, callbackPerWebpage = lambda: None, callbackOnEnd = lambda: None):
     pageQueue = [url]
+    pageQueueLinkTexts = {url:""}
     npagesVisited = 0
     unwantedPages = []
     domain = parse.urlparse(url).netloc
@@ -94,14 +96,17 @@ def crawl(url, maxpages, database, callbackPerWebpage = lambda: None, callbackOn
         currentUrl = pageQueue[0]
         print(npagesVisited, "Visiting:", currentUrl)
 
-        webpage = parser.processPage(currentUrl, webpage.linkText)
+        webpage = parser.processPage(currentUrl, pageQueueLinkTexts[currentUrl])
         if webpage is None:
-            webpage = emptyWebpage # Next time
             unwantedPages.append(currentUrl)
             continue
         database.addURL(currentUrl)
         database.addWebpage(webpage)
         pageQueue += webpage.links
+        # Merge our textlink dictionary with the one we just found
+        z = pageQueueLinkTexts.copy()
+        z.update(webpage.linkTexts)
+        pageQueueLinkTexts = z
         callbackPerWebpage()
         npagesVisited += 1
 
