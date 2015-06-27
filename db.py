@@ -20,6 +20,18 @@ class Database :
         self.outgoing   = [0  for x in range(n)]
         self.incoming   = [0  for x in range(n)]
 
+    def getDocID(self, url) :
+        return self.urlTable[url]
+
+    def discoverLinks(self):
+        for webpage in self.webpages:
+            docID = self.getDocID(webpage.URL)
+            for url in webpage.links:
+                if not url in self.urlTable.keys():
+                    continue
+                otherDocID = self.getDocID(url)
+                self.addLink(docID, otherDocID)
+
     def calcPageRank(self, d, i) :
         v = 0
         for j in range(0, self.count) :
@@ -51,6 +63,9 @@ class Database :
                     self.words[word].append(barrel.docID)
     
     def pageRank(self) :
+        # find links
+        self.discoverLinks()
+        
         # use constant 0.85 from the original PageRank paper
         d = 0.85
         self.processRefTable()
@@ -68,20 +83,24 @@ class Database :
     def containsURL(self, url):
         return url in self.urlTable.keys()
 
-    def getDocID(self, url) :
-        return self.urlTable[url]
-
     def getURL(self, docID) :
         return self.docIDTable[docID]
 
     def addLink(self, docID1, docID2) :
         self.refTable[docID1][docID2] += 1
 
-    def discoverLinks(self):
-        for webpage in self.webpages:
-            docID = self.getDocID(webpage.URL)
-            for url in webpage.links:
-                if not url in self.urlTable.keys():
-                    continue
-                otherDocID = self.getDocID(url)
-                self.addLink(docID, otherDocID)
+    def search(self, words) :
+        # aantal hits:
+        for word in words.keys :
+            urls = []
+            wordHits = 0
+            for barrel in barrels :
+                wordHits += barrel.search(word)
+            if wordHits > 0 :
+                urls.append(barrel.docID)
+
+            # alternatief kan direct met de docIDs gezocht worden met de values.
+            # misschien nog een andere value nemen dan >0 voor de gevonden urls.
+
+            # sort alle urls op self.prTable[docID],
+            # waar docID te verkrijgen is uit de docIDs met wordHits > 0
