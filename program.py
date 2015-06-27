@@ -18,6 +18,7 @@ def crawlButtonClicked():
     maxpages = int(pagelimitbox.get())
     database = Database(maxpages)
     pbar.configure(value=0, maximum=maxpages)
+    # Crawl in a thread to keep the interface mainloop going (which allows the progress bar to be redrawn)
     global crawler_thread
     crawler_thread = threading.Thread(target=crawl, args=(url, maxpages, database, crawlerPageCallback, crawlerFinishedCallback))
     crawler_thread.start()
@@ -60,28 +61,34 @@ crawlerframe = ttk.LabelFrame(root, text="Crawler")
 crawlerframe.grid(column=0, row =0, sticky=(N, W, S))
 crawlerframe.columnconfigure(1, weight=1)
 
-lblcurrent = ttk.Label(crawlerframe, text="Current domain:")
-lblcurrent.grid(column=0, row =0)
+lblcurrentDomain = ttk.Label(crawlerframe, text="Current domain:")
+lblcurrentDomain.grid(column=0, row =0)
 
 ### NEW CRAWL
 crawlseparator = ttk.Separator(crawlerframe)
 crawlseparator.grid(row=1, column=0, columnspan=2, sticky=(W, E), pady=12)
 
-lblurl = ttk.Label(crawlerframe, text="URL")
-lblurl.grid(column=0, row =2)
+urlAndButtonFrame = ttk.Frame(crawlerframe)
+urlAndButtonFrame.grid(column=0, row = 2, sticky=W)
 
-urlentry = ttk.Entry(crawlerframe)
-urlentry.grid(column=1, row =2)
+lblurl = ttk.Label(urlAndButtonFrame, text="URL")
+lblurl.grid(column=0, row =0)
 
-crawlbutton = ttk.Button(crawlerframe, text="Crawl", command=crawlButtonClicked)
-crawlbutton.grid(column=2, row=2, sticky=(W))
+urlentry = ttk.Entry(urlAndButtonFrame)
+urlentry.grid(column=1, row =0)
 
-lblpagelimit = ttk.Label(crawlerframe, text="Process up to this many pages")
-lblpagelimit.grid(column=0, row =3)
+crawlbutton = ttk.Button(urlAndButtonFrame, text="Crawl", command=crawlButtonClicked)
+crawlbutton.grid(column=2, row=0, sticky=(W))
 
-pagelimitbox = ttk.Combobox(crawlerframe, values=("5", "10", "100", "1000"))
+pagelimitFrame = ttk.Frame(crawlerframe)
+pagelimitFrame.grid(column=0, row=3)
+
+lblpagelimit = ttk.Label(pagelimitFrame, text="Maximum pages to visit")
+lblpagelimit.grid(column=1, row =1)
+
+pagelimitbox = ttk.Combobox(pagelimitFrame, values=("5", "10", "100", "1000"))
 pagelimitbox.current(0)
-pagelimitbox.grid(column=1, row=3)
+pagelimitbox.grid(column=2, row=1)
 pagelimitbox.state(['readonly'])
 
 pbar = ttk.Progressbar(crawlerframe, length=400)
@@ -94,7 +101,7 @@ searchframe.grid(column=0, row=1, sticky=(N, W, E, S))
 keywordentry = ttk.Entry(searchframe)
 keywordentry.grid(column=1, row =0)
 
-searchbutton = ttk.Button(searchframe, text="Search", command=searchButtonClicked)
+searchbutton = ttk.Button(searchframe, text="Search", command=searchButtonClicked, state=DISABLED)
 searchbutton.grid(column=2, row=0)
 
 ### RESULTS frame
