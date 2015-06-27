@@ -19,7 +19,7 @@ class LinkParser(HTMLParser):
             for (key, value) in attrs:
                 if key == 'href':
                     newUrl = parse.urljoin(self.baseUrl, value)
-                    self.links = self.links + [[newUrl]]
+                    self.links = self.links + [newUrl]
 
         if tag == 'title':
             self.inTitle = True
@@ -28,7 +28,7 @@ class LinkParser(HTMLParser):
             for (key, value) in attrs:
                 if key == 'src':
                     newUrl = parse.urljoin(self.baseUrl, value)
-                    self.links = self.links + [[newUrl]]
+                    self.links = self.links + [newUrl]
 
     def handle_endtag(self, tag):
         if tag == 'title':
@@ -40,10 +40,13 @@ class LinkParser(HTMLParser):
         if self.inTitle:
             self.title = data.strip()
         if self.inATag:
-            self.links[-1].append(data.strip())
+            self.linkTexts[self.links[-1]] = data.strip()
+            # Not all A tags are ended properly, this is to prevent parsing the entire document as the linktext
+            self.inATag = False
 
     def processPage(self, url, linkText):
         self.links = []
+        self.linkTexts = {}
         self.title = -1
         self.baseUrl = url
 
@@ -64,27 +67,29 @@ class LinkParser(HTMLParser):
             htmlBytes = response.read()
             htmlString = htmlBytes.decode(charset) # Need to prepare the data for the parser this way
             self.feed(htmlString)
-            return Webpage(url, self.title, linkText, self.links)
+            return Webpage(url, self.title, linkText, self.links, self.linkTexts)
         else:
             return None
 
 def crawl(url, maxpages):
-    pageQueue = [[url,""]]
+    pageQueue = [url]
     npagesVisited = 0
     db = Database(maxpages)
     parser = LinkParser()
+    # Set up a "previous" webpage which we came from (we really didn't) but it's needed to start up the process
+    webpage = Webpage("No URL", "No Title", "No linktext", [], {})
 
     while npagesVisited < maxpages and pageQueue != []:
         # Don't visit the same webpage again
-        while pageQueue != [] and db.containsURL(pageQueue[0][0]):
+        while pageQueue != [] and db.containsURL(pageQueue[0]):
             pageQueue = pageQueue[1:]
         if pageQueue == []:
             break
         currentUrl = pageQueue[0]
         print(npagesVisited, "Visiting:", currentUrl)
 
-        webpage = parser.processPage(currentUrl[0], currentUrl[1])
-        db.addURL(currentUrl[0])
+        webpage = parser.processPage(currentUrl, webpage.linkText)
+        db.addURL(currentUrl)
         db.addWebpage(webpage)
         pageQueue += webpage.links
         print(webpage.URL, webpage.Titletext, webpage.Keywords, webpage.links)

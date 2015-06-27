@@ -50,9 +50,9 @@ class Database :
         for webpage in self.webpages:
             docID = self.getDocID(webpage.URL)
             for url in webpage.links:
-                if not url[0] in self.urlTable.keys():
+                if not url in self.urlTable.keys():
                     continue
-                otherDocID = self.getDocID(url[0])
+                otherDocID = self.getDocID(url)
                 self.addLink(docID, otherDocID)
 
     def processRefTable(self) :
