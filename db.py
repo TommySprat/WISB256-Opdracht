@@ -36,7 +36,8 @@ class Database :
         v = 0
         for j in range(0, self.count) :
             if j != i :
-                v += self.prTable[j]/self.outgoing[j]
+                # use + 1 here, to avoid dividing by zero
+                v += self.prTable[j]/(self.outgoing[j] + 1)
         pr = (1-d)+(d*v)
 
     def processRefTable(self) :
