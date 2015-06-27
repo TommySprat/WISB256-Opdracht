@@ -79,6 +79,7 @@ def crawl(url, maxpages, database, callbackPerWebpage = lambda: None, callbackOn
     pageQueue = [url]
     npagesVisited = 0
     unwantedPages = []
+    domain = parse.urlparse(url).netloc
     parser = LinkParser()
     # Set up a "previous" webpage which we came from (we really didn't) but it's needed to start up the process
     emptyWebpage = Webpage("No URL", "No Title", "No linktext", [], {})
@@ -86,7 +87,7 @@ def crawl(url, maxpages, database, callbackPerWebpage = lambda: None, callbackOn
 
     while npagesVisited < maxpages and pageQueue != []:
         # Don't visit the same webpage again
-        while pageQueue != [] and (database.containsURL(pageQueue[0]) or pageQueue[0] in unwantedPages):
+        while pageQueue != [] and (database.containsURL(pageQueue[0]) or pageQueue[0] in unwantedPages or parse.urlparse(pageQueue[0]).netloc != domain):
             pageQueue = pageQueue[1:]
         if pageQueue == []:
             break
@@ -104,9 +105,6 @@ def crawl(url, maxpages, database, callbackPerWebpage = lambda: None, callbackOn
         callbackPerWebpage()
         npagesVisited += 1
 
-    print(database.refTable)
-    database.discoverLinks()
-    print(database.refTable)
     callbackOnEnd()
     return database
 
