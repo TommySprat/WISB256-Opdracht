@@ -26,6 +26,7 @@ def crawlButtonClicked():
     crawler_thread = threading.Thread(target=crawl, args=(url, maxpages, database, crawlerPageCallback, crawlerFinishedCallback))
     crawler_thread.start()
     lblcurrentDomain.configure(text=urllib.parse.urlparse(url).netloc, foreground='purple')
+    lblstatus.configure(text="Crawling the web, please wait...")
 
 def crawlerPageCallback():
     pbarcrawler.step()
@@ -39,6 +40,13 @@ def crawlerFinishedCallback():
     global pagerank_thread
     pagerank_thread = threading.Thread(target=database.pageRank)
     pagerank_thread.start()
+    lblstatus.configure(text="Running the PageRank algorithm")
+    lblcurrentDomain.configure(foreground='green')
+
+def pageRankFinishedCallback():
+    lblstatus.configure(text="Search engine is ready. Enter your search terms")
+    pbarpagerank.stop()
+    searchbutton.configure(state=NORMAL)
 
 def searchButtonClicked():
     resultList = []
