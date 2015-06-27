@@ -2,6 +2,10 @@ from webpage import Webpage
 from barrel import Barrel
 
 class Database :
+    # use parameter value 100 from the original PageRank paper
+    limit      = 100
+    # use constant value 0.85 from the original PageRank paper
+    d          = 0.85
     count      = 0
     urlTable   = {}
     docIDTable = []
@@ -32,21 +36,21 @@ class Database :
                 otherDocID = self.getDocID(url)
                 self.addLink(docID, otherDocID)
 
-    def calcPageRank(self, d, i) :
+    def calcPageRank(self, i) :
         v = 0
         for j in range(0, self.count) :
             if j != i :
                 # use + 1 here, to avoid dividing by zero
                 v += self.prTable[j]/(self.outgoing[j] + 1)
-        pr = (1-d)+(d*v)
+        return (1 - self.d) + (self.d * v)
 
     def processRefTable(self) :
         for i in range(0, self.count) :
-            incoming = 0
+            outgoing = 0
             for j in range(0, self.count) :
-                incoming += self.refTable[i][j]
-                self.outgoing[j] = self.refTable[i][j]
-            self.incoming[i] = incoming
+                outgoing += self.refTable[i][j]
+                self.incoming[j] += self.refTable[i][j]
+            self.outgoing[i] = outgoing
 
     def fillBarrels(self) :
         # fill barrels
@@ -66,14 +70,12 @@ class Database :
     def pageRank(self) :
         # find links
         self.discoverLinks()
-        
-        # use constant 0.85 from the original PageRank paper
-        d = 0.85
         self.processRefTable()
         self.fillBarrels()
-        for i in range(0, len(self.prTable)) :
-            self.prTable[i] = self.calcPageRank(d, i)
-        print('pagerank done')
+
+        for _ in range(0, self.limit) :
+            for i in range(0, len(self.prTable)) :
+                self.prTable[i] = self.calcPageRank(i)
 
     def addURL(self, url) :
         self.docIDTable.append(url)
