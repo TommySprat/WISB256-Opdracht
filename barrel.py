@@ -14,7 +14,7 @@ class Barrel :
             self.words[word] = 1
 
     def search(self, word) :
-        if word in self.words.keys :
+        if word in self.words.keys() :
             return self.words[word]
         else :
             return 0

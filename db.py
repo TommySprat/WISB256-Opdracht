@@ -57,10 +57,10 @@ class Database :
         # fill words
         for barrel in self.barrels :
             for word in barrel.words :
-                if word in self.words.keys :
-                    self.words[word] = [barrel.docID]
-                else :
+                if word in self.words.keys() :
                     self.words[word].append(barrel.docID)
+                else :
+                    self.words[word] = [barrel.docID]
     
     def pageRank(self) :
         # find links
