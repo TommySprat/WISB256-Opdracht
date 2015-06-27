@@ -2,8 +2,8 @@ from webpage import Webpage
 from barrel import Barrel
 
 class Database :
-    # use parameter value 100 from the original PageRank paper
-    limit      = 100
+    # use just one iteration normally
+    limit      = 1
     # use constant value 0.85 from the original PageRank paper
     d          = 0.85
     count      = 0
@@ -76,6 +76,7 @@ class Database :
         for _ in range(0, self.limit) :
             for i in range(0, len(self.prTable)) :
                 self.prTable[i] = self.calcPageRank(i)
+        print(self.prTable)
 
     def addURL(self, url) :
         self.docIDTable.append(url)
