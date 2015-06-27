@@ -3,7 +3,6 @@ from urllib.request import urlopen
 from urllib import parse
 from webpage import Webpage
 import re
-from db import Database
 
 class LinkParser(HTMLParser):
 
