@@ -1,11 +1,10 @@
 class Barrel :
     docID       = -1
     words       = {}
-    count       = -1
 
     def __init__(self, docID):
         self.docID = docID
-        self.count = 0
+        self.words = {}
 
     def addWord(self, word) :
         if word in self.words :
@@ -18,3 +17,9 @@ class Barrel :
             return self.words[word]
         else :
             return 0
+
+    def __str__(self) :
+        return 'barrel: docID:%s, words:%s' % (self.docID, self.words)
+
+    def __repr__(self) :
+        return 'barrel: docID:%s, words:%s' % (self.docID, self.words)
