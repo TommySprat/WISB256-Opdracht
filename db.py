@@ -67,7 +67,7 @@ class Database :
                 else :
                     self.words[word] = [barrel.docID]
     
-    def pageRank(self) :
+    def pageRank(self, callbackOnFinish) :
         # find links
         self.discoverLinks()
         self.processRefTable()
@@ -77,6 +77,7 @@ class Database :
             for i in range(0, len(self.prTable)) :
                 self.prTable[i] = self.calcPageRank(i)
         print(self.prTable)
+        callbackOnFinish()
 
     def addURL(self, url) :
         self.docIDTable.append(url)

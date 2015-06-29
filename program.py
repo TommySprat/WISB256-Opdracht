@@ -44,8 +44,9 @@ def crawlerFinishedCallback():
     pbarcrawler.configure(value=maxpages)
 
     pbarpagerank.start()
+    global database
     global pagerank_thread
-    pagerank_thread = threading.Thread(target=database.pageRank)
+    pagerank_thread = threading.Thread(target=database.pageRank, kwargs={'callbackOnFinish' : pageRankFinishedCallback})
     pagerank_thread.start()
     lblstatus.configure(text="Running the PageRank algorithm")
     lblcurrentDomain.configure(foreground='green')
