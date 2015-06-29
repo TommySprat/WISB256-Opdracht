@@ -6,19 +6,15 @@ class Database :
     limit      = 1
     # use constant value 0.85 from the original PageRank paper
     d          = 0.85
-    count      = 0
-    urlTable   = {}
-    docIDTable = []
-    prTable    = []
-    refTable   = []
-    outgoing   = []
-    incoming   = []
-    webpages   = []
-    barrels    = []
-    words      = {}
 
     def __init__(self, n):
-        self.count = n
+        self.urlTable   = {}
+        self.wordURL    = {}
+        self.words      = {}
+        self.docIDTable = []
+        self.webpages   = []
+        self.barrels    = []
+        self.count      = n
         self.prTable    = [1/n  for x in range(n)]
         self.refTable   = [[0 for x in range(n)] for x in range(n)] 
         self.outgoing   = [0  for x in range(n)]
@@ -54,13 +50,14 @@ class Database :
 
     def fillBarrels(self) :
         # fill barrels
+        self.barrels = {}
         for webpage in self.webpages :
-            b = Barrel(self.urlTable[webpage.URL])
+            barrel = Barrel(self.urlTable[webpage.URL])
             for word in webpage.Keywords :
-                b.addWord(word)
-            self.barrels.append(b)
+                barrel.addWord(word)
+            self.barrels[barrel.docID] = barrel
         # fill words
-        for barrel in self.barrels :
+        for barrel in self.barrels.values() :
             for word in barrel.words :
                 if word in self.words.keys() :
                     self.words[word].append(barrel.docID)
@@ -76,7 +73,6 @@ class Database :
         for _ in range(0, self.limit) :
             for i in range(0, len(self.prTable)) :
                 self.prTable[i] = self.calcPageRank(i)
-        print(self.prTable)
         callbackOnFinish()
 
     def addURL(self, url) :
@@ -95,18 +91,26 @@ class Database :
     def addLink(self, docID1, docID2) :
         self.refTable[docID1][docID2] += 1
 
+    def sort(self, docID) :
+        return self.wordURL[docID]
+
     def search(self, words) :
         # aantal hits:
+        self.wordURL = {}
+        wordIdToHits = {}
         for word in words :
-            urls = []
             wordHits = 0
-            for barrel in self.barrels :
-                wordHits += barrel.search(word)
-            if wordHits > 0 :
-                urls.append(barrel.docID)
-
-            # alternatief kan direct met de docIDs gezocht worden met de values.
-            # misschien nog een andere value nemen dan >0 voor de gevonden urls.
-
-            # sort alle urls op self.prTable[docID],
-            # waar docID te verkrijgen is uit de docIDs met wordHits > 0
+            for barrel in self.barrels.values() :
+                hits = barrel.search(word)
+                wordHits += hits
+                if hits > 0 :
+                    if barrel.docID in wordIdToHits.keys() :
+                        wordIdToHits[barrel.docID] += wordHits
+                    else :
+                        wordIdToHits[barrel.docID] = wordHits
+        for docID in wordIdToHits :
+            self.wordURL[docID] = (wordIdToHits[docID], self.prTable[docID])
+        sortList = sorted(self.wordURL, key=self.sort)
+        sortList = [self.getURL(docID) for docID in sortList]
+        sortList.reverse()
+        return sortList
