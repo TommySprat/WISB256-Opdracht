@@ -59,8 +59,8 @@ def pageRankFinishedCallback():
 def searchButtonClicked():
     global database
     searchterms = str(keywordentry.get()).split()
-    # Convert all keyword to lowercase because keywords are stored in lowercase
-    searchterms = [word.lower() for word in searchterms]
+    # Use the special python casefold function to prepare the string independent of upper/lower case
+    searchterms = [word.casefold() for word in searchterms]
     print ("dbWords", database.words)
 
     # TODO: Better management of this resultList
