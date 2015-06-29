@@ -52,19 +52,24 @@ def crawlerFinishedCallback():
     lblcurrentDomain.configure(foreground='green')
 
 def pageRankFinishedCallback():
-    lblstatus.configure(text="Search engine is ready. Enter your search terms")
     pbarpagerank.stop()
+    lblstatus.configure(text="Search engine is ready. Enter your search terms")
     searchbutton.configure(state=NORMAL)
 
 def searchButtonClicked():
+    global database
+    searchterms = str(keywordentry.get()).split()
+    # Convert all keyword to lowercase because keywords are stored in lowercase
+    searchterms = [word.lower() for word in searchterms]
+    print ("dbWords", database.words)
+
+    # TODO: Better management of this resultList
     resultList = []
     urls = ["www.google.nl", "www.wikipedia.com", "www.tweakers.net"]
     for i in range(3):
         resultList.append(ttk.Label(resultframe, text=urls[i], cursor="hand2"))
         resultList[i].grid(column=0, row=i)
         resultList[i].bind('<Button-1>', lambda e, url=urls[i]:open_url(url))
-        print(resultList[i]['style'])
-        print(resultList[i].winfo_class())
         url_style_label(resultList[i])
 
 def url_style_label(label):
@@ -132,7 +137,7 @@ pagelimitFrame.grid(column=0, row=3)
 lblpagelimit = ttk.Label(pagelimitFrame, text="Maximum pages to visit")
 lblpagelimit.grid(column=1, row =1)
 
-pagelimitbox = ttk.Combobox(pagelimitFrame, values=("5", "10", "100", "1000"))
+pagelimitbox = ttk.Combobox(pagelimitFrame, values=("5", "10", "25", "50", "100", "500", "1000"))
 pagelimitbox.current(0)
 pagelimitbox.grid(column=2, row=1)
 pagelimitbox.state(['readonly'])

@@ -97,10 +97,10 @@ class Database :
 
     def search(self, words) :
         # aantal hits:
-        for word in words.keys :
+        for word in words :
             urls = []
             wordHits = 0
-            for barrel in barrels :
+            for barrel in self.barrels :
                 wordHits += barrel.search(word)
             if wordHits > 0 :
                 urls.append(barrel.docID)
