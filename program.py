@@ -70,7 +70,7 @@ def searchButtonClicked():
 
     webpages = database.search(searchterms)
     for i in range(len(webpages)):
-        resultLabel = ttk.Label(resultContentFrame, text=webpages[i].Titletext, cursor="hand2")
+        resultLabel = ttk.Label(resultContentFrame, text=webpages[i], cursor="hand2")
         resultLabel.grid(column=0, row=i)
         resultLabel.bind('<Button-1>', lambda e, url=webpages[i].URL: open_url(url))
         url_style_label(resultLabel)

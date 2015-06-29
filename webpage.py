@@ -14,4 +14,10 @@ class Webpage :
         self.linkTexts = linkTexts
 
     def __repr__(self) :
-        return '%s | %s [%s]' % (self.Titletext, self.linkText, self.URL)
+        toString = '%s' % self.linkText
+        if toString != '' and self.Titletext != '' :
+            toString += ' | '
+        toString += self.Titletext
+        if toString == '' :
+            toString = self.URL
+        return toString
