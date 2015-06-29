@@ -58,3 +58,8 @@ target/
 
 # Pycharm
 .idea
+/barrels.txt
+/prTable.txt
+/results.txt
+/urls.txt
+/words.txt

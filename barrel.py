@@ -1,7 +1,5 @@
 class Barrel :
-    docID       = -1
-    words       = {}
-
+    
     def __init__(self, docID):
         self.docID = docID
         self.words = {}
