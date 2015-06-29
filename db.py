@@ -13,6 +13,7 @@ class Database :
         self.urlTable   = {}
         self.wordURL    = {}
         self.words      = {}
+        self.pageDict   = {}
         self.docIDTable = []
         self.webpages   = []
         self.barrels    = []
@@ -82,6 +83,7 @@ class Database :
 
     def addWebpage(self, webpage):
         self.webpages.append(webpage)
+        self.pageDict[webpage.URL] = webpage
 
     def containsURL(self, url):
         return url in self.urlTable.keys()
@@ -134,6 +136,6 @@ class Database :
                 print(url, sep='\n', file=file5)
             file5.close()
         sortList = sorted(self.wordURL, key=self.sort)
-        sortList = [self.getURL(docID) for docID in sortList]
+        sortList = [self.pageDict[self.getURL(docID)] for docID in sortList]
         sortList.reverse()
         return sortList

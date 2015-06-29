@@ -139,7 +139,7 @@ pagelimitFrame.grid(column=0, row=3)
 lblpagelimit = ttk.Label(pagelimitFrame, text="Maximum pages to visit")
 lblpagelimit.grid(column=1, row =1)
 
-pagelimitbox = ttk.Combobox(pagelimitFrame, values=("5", "10", "25", "50", "100", "150", "200", "250", "300" "500", "1000"))
+pagelimitbox = ttk.Combobox(pagelimitFrame, values=("5", "10", "25", "50", "100", "150", "200", "250", "300", "500", "1000"))
 pagelimitbox.current(0)
 pagelimitbox.grid(column=2, row=1)
 pagelimitbox.state(['readonly'])
