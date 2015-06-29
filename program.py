@@ -10,6 +10,7 @@ import threading
 
 #TODO: Styles maken voor de labelframes
 
+global resultContentFrame
 global database
 database = None
 
@@ -58,24 +59,25 @@ def pageRankFinishedCallback():
 
 def searchButtonClicked():
     global database
+    global resultContentFrame
+    resultContentFrame.grid_forget()
+    resultContentFrame = ttk.Frame(resultframe)
+    resultContentFrame.grid(row=0, column=0)
+
     searchterms = str(keywordentry.get()).split()
     # Use the special python casefold function to prepare the string independent of upper/lower case
     searchterms = [word.casefold() for word in searchterms]
 
-    # TODO: Better management of this resultList
-    resultList = []
-
     urls = database.search(searchterms)
     for i in range(len(urls)):
-        resultList.append(ttk.Label(resultframe, text=urls[i], cursor="hand2"))
-        resultList[i].grid(column=0, row=i)
-        resultList[i].bind('<Button-1>', lambda e, url=urls[i]:open_url(url))
-        url_style_label(resultList[i])
+        resultLabel = ttk.Label(resultContentFrame, text=urls[i], cursor="hand2")
+        resultLabel.grid(column=0, row=i)
+        resultLabel.bind('<Button-1>', lambda e, url=urls[i]: open_url(url))
+        url_style_label(resultLabel)
 
 def url_style_label(label):
     urlFont = font.Font(family='Helvetica', size=14, underline=1)
     label.configure(font=urlFont, foreground='blue', padding=(1, 2))
-
 
 root = Tk()
 root.title("Gel Goo")
@@ -137,7 +139,7 @@ pagelimitFrame.grid(column=0, row=3)
 lblpagelimit = ttk.Label(pagelimitFrame, text="Maximum pages to visit")
 lblpagelimit.grid(column=1, row =1)
 
-pagelimitbox = ttk.Combobox(pagelimitFrame, values=("5", "10", "25", "50", "100", "500", "1000"))
+pagelimitbox = ttk.Combobox(pagelimitFrame, values=("5", "10", "25", "50", "100", "150", "200", "250", "300" "500", "1000"))
 pagelimitbox.current(0)
 pagelimitbox.grid(column=2, row=1)
 pagelimitbox.state(['readonly'])
@@ -162,5 +164,8 @@ searchbutton.grid(column=2, row=0)
 resultframe = ttk.LabelFrame(root, text="Results")
 resultframe.grid(column=0, row =3, sticky=(N, W, E, S))
 
+# To contain the results but it will be a new object every time
+resultContentFrame = ttk.Frame(resultframe)
+resultContentFrame.grid(row=0, column=0)
 
 root.mainloop()

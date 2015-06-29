@@ -18,7 +18,7 @@ class LinkParser(HTMLParser):
             for (key, value) in attrs:
                 if key == 'href':
                     newUrl = parse.urljoin(self.baseUrl, value)
-                    self.links = self.links + [newUrl]
+                    self.links = self.links + [newUrl.strip('/')]
 
         if tag == 'title':
             self.inTitle = True
@@ -27,7 +27,7 @@ class LinkParser(HTMLParser):
             for (key, value) in attrs:
                 if key == 'src':
                     newUrl = parse.urljoin(self.baseUrl, value)
-                    self.links = self.links + [newUrl]
+                    self.links = self.links + [newUrl.strip('/')]
                     self.linkTexts[newUrl] = "" # Frames have no data to read this value from
 
     def handle_endtag(self, tag):
@@ -76,6 +76,7 @@ class LinkParser(HTMLParser):
             return None
 
 def crawl(url, maxpages, database, callbackPerWebpage = lambda: None, callbackOnEnd = lambda: None):
+    url = url.strip('/')
     pageQueue = [url]
     pageQueueLinkTexts = {url:""}
     npagesVisited = 0
