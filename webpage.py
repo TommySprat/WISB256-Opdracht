@@ -12,3 +12,6 @@ class Webpage :
 
         self.links = links
         self.linkTexts = linkTexts
+
+    def __repr__(self) :
+        return '%s | %s [%s]' % (self.Titletext, self.linkText, self.URL)
