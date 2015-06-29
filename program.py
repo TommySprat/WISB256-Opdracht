@@ -68,11 +68,11 @@ def searchButtonClicked():
     # Use the special python casefold function to prepare the string independent of upper/lower case
     searchterms = [word.casefold() for word in searchterms]
 
-    urls = database.search(searchterms)
-    for i in range(len(urls)):
-        resultLabel = ttk.Label(resultContentFrame, text=urls[i], cursor="hand2")
+    webpages = database.search(searchterms)
+    for i in range(len(webpages)):
+        resultLabel = ttk.Label(resultContentFrame, text=webpages[i].Titletext, cursor="hand2")
         resultLabel.grid(column=0, row=i)
-        resultLabel.bind('<Button-1>', lambda e, url=urls[i]: open_url(url))
+        resultLabel.bind('<Button-1>', lambda e, url=webpages[i].URL: open_url(url))
         url_style_label(resultLabel)
 
 def url_style_label(label):
