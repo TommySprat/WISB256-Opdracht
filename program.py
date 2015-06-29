@@ -61,12 +61,12 @@ def searchButtonClicked():
     searchterms = str(keywordentry.get()).split()
     # Use the special python casefold function to prepare the string independent of upper/lower case
     searchterms = [word.casefold() for word in searchterms]
-    print ("dbWords", database.words)
 
     # TODO: Better management of this resultList
     resultList = []
-    urls = ["www.google.nl", "www.wikipedia.com", "www.tweakers.net"]
-    for i in range(3):
+
+    urls = database.search(searchterms)
+    for i in range(len(urls)):
         resultList.append(ttk.Label(resultframe, text=urls[i], cursor="hand2"))
         resultList[i].grid(column=0, row=i)
         resultList[i].bind('<Button-1>', lambda e, url=urls[i]:open_url(url))
