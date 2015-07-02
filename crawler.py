@@ -95,12 +95,21 @@ def crawl(url, maxpages, database, callbackPerWebpage = lambda: None, callbackOn
         currentUrl = pageQueue[0]
         print(npagesVisited, "Visiting:", currentUrl)
 
-        webpage = parser.processPage(currentUrl, pageQueueLinkTexts[currentUrl])
+        try:
+            webpage = parser.processPage(currentUrl, pageQueueLinkTexts[currentUrl])
+        except:
+            # Some URLs lead to different URLs and that messes up the dictionary
+            print("Skipped a URL mismatch")
+            unwantedPages.append(currentUrl)
+            continue
         if webpage is None:
+            print("Skipped a page that doesn't parse correctly")
             unwantedPages.append(currentUrl)
             continue
         database.addURL(currentUrl)
         database.addWebpage(webpage)
+        # Clean up the dictionary so it doesn't become huge with unused entries
+        #del pageQueueLinkTexts[currentUrl]
         pageQueue += webpage.links
         # Merge our textlink dictionary with the one we just found
         z = pageQueueLinkTexts.copy()
