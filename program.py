@@ -23,6 +23,9 @@ def crawlButtonClicked():
         messagebox.showerror(message='Please enter a valid URL such as http://www.google.com', title='Invalid URL')
         return
 
+    searchbutton.configure(state=DISABLED)
+    keywordentry.configure(state=DISABLED)
+
     maxpages = int(pagelimitbox.get())
     global database
     database = Database(maxpages)
@@ -54,6 +57,7 @@ def pageRankFinishedCallback():
     pbarpagerank.stop()
     lblstatus.configure(text="Search engine is ready. Enter your search terms")
     searchbutton.configure(state=NORMAL)
+    keywordentry.configure(state=ACTIVE)
 
 def searchButtonClicked():
     global database
@@ -165,7 +169,7 @@ pbarpagerank.grid(column=0, row=5, columnspan=2)
 searchframe = ttk.LabelFrame(root, text="Search")
 searchframe.grid(column=0, row=2, sticky=(N, W, E, S))
 
-keywordentry = ttk.Entry(searchframe)
+keywordentry = ttk.Entry(searchframe, state=DISABLED)
 keywordentry.grid(column=1, row =0)
 
 searchbutton = ttk.Button(searchframe, text="Search", command=searchButtonClicked, state=DISABLED)
