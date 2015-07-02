@@ -8,8 +8,6 @@ import webbrowser
 from db import Database
 import threading
 
-#TODO: Styles maken voor de labelframes
-
 global resultContentFrame
 global database
 database = None
@@ -69,15 +67,28 @@ def searchButtonClicked():
     searchterms = [word.casefold() for word in searchterms]
 
     webpages = database.search(searchterms)
+    # Return a maximum of 10 results
+    if len(webpages) > 10:
+        webpages = webpages[:10]
     for i in range(len(webpages)):
-        resultLabel = ttk.Label(resultContentFrame, text=webpages[i], cursor="hand2")
-        resultLabel.grid(column=0, row=i)
+        resultLabel = ttk.Label(resultContentFrame, text=str(i+1) + " " + webpages[i].Titletext, cursor="hand2")
+        urlLabel = ttk.Label(resultContentFrame, text=webpages[i].URL, cursor="hand2")
+        spacerLabel = ttk.Label(resultContentFrame, text=" ")
+        resultLabel.grid(column=0, row=3*i)
+        urlLabel.grid(column=0, row=3*i+1)
+        spacerLabel.grid(column=0, row=3*i+2)
         resultLabel.bind('<Button-1>', lambda e, url=webpages[i].URL: open_url(url))
-        url_style_label(resultLabel)
+        urlLabel.bind('<Button-1>', lambda e, url=webpages[i].URL: open_url(url))
+        title_style_label(resultLabel)
+        url_style_label(urlLabel)
+
+def title_style_label(label):
+    titleFont = font.Font(family='Helvetica', size=12, underline=1)
+    label.configure(font=titleFont, foreground='blue')
 
 def url_style_label(label):
-    urlFont = font.Font(family='Helvetica', size=14, underline=1)
-    label.configure(font=urlFont, foreground='blue', padding=(1, 2))
+    urlFont = font.Font(family='Helvetica', size=9, underline=1)
+    label.configure(font=urlFont, foreground='blue')
 
 root = Tk()
 root.title("Gel Goo")
