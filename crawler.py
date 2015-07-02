@@ -109,7 +109,7 @@ def crawl(url, maxpages, database, callbackPerWebpage = lambda: None, callbackOn
         database.addURL(currentUrl)
         database.addWebpage(webpage)
         # Clean up the dictionary so it doesn't become huge with unused entries
-        #del pageQueueLinkTexts[currentUrl]
+        del pageQueueLinkTexts[currentUrl]
         pageQueue += webpage.links
         # Merge our textlink dictionary with the one we just found
         z = pageQueueLinkTexts.copy()
