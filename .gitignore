@@ -63,3 +63,8 @@ target/
 /results.txt
 /urls.txt
 /words.txt
+*.gz
+bib/Verslag/paper wisb.out
+*.blg
+bib/Verslag/paper wisb.bbl
+*.aux
