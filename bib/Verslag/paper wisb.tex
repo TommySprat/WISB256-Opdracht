@@ -69,7 +69,9 @@ Om een PageRank te bepalen voor een site, moet je ook de links die de pagina bev
 Uit deze formule kan de PR(A) de betekenis hebben dat het de kans aangeeft dat een wikkekeurig persoon op pagina A komt door op random verschillende links te drukken. Een andere betekenis kan bijvoorbeeld bepaling van de populariteit zijn van pagina A. 
 \vspace{1pc}
 
-Een lage waarde voor de dempingsfactor geeft aan dat de persoon die de pagina bezoekt snel zijn interesse verloren heeft en eindigt met het willekeurig aanklikken van de links. Een hoge waarde (1 bijvoorbeeld) geeft dus het omgekeerde aan. De persoon op de pagina heeft meer interesse en zal langer willekeurige links aanklikken. De algemene waarde van d ligt vaak bij 0,85. 
+Een lage waarde voor de dempingsfactor geeft aan dat de persoon die de pagina bezoekt snel zijn interesse verloren heeft en eindigt met het willekeurig aanklikken van de links.
+
+Een hoge waarde (1 bijvoorbeeld) geeft dus het omgekeerde aan. De persoon op de pagina heeft meer interesse en zal langer willekeurige links aanklikken. De algemene waarde van d ligt vaak bij 0,85. 
 \vspace{1pc}
 
 Men kan de PageRank verhogen van A door andere pagina's die meer verwijzen naar de pagina a \cite{1}. De PageRank loopt van 0 tot 10. De sites met PageRank 0 zouden (zonder de andere factoren meegeteld die de zoekresultaat plaats bepalen) helemaal niet in de zoekresultaten moeten voorkomen, en een site met PageRank 10 zoals Google, Facebook en CNN zal boven aan moeten staan. Hieronder staat een figuur beschreven die de PageRank aangeeft van verschillende sites. Hoe hoger ``de berg", hoe meer inspanning het zal kosten. Een website hoort bij de ``Elite" als het een PageRank heeft tussen 8 en 10. \cite{3}
@@ -197,12 +199,13 @@ GUI:
 We gebruiken vooral dictionaries en lists.
 \subsection{Threading}
 Een moderne desktop-processor voor consumenten heeft tegenwoordig minstens twee fysieke rekenkernen, ook wel ``cores" in het engels. Intel heeft ook nog een techniek genaamd hyperthreading waarbij een fysieke core zich aan het systeem presenteert als twee cores.
-Vanuit het perspectief van de software zijn alle cores hetzelfde. Het zijn grofweg gezien individuele op zichzelf staande rekeneenheden die dus totaal onafhankelijk van elkaar rekenwerk kunnen verrichten. Dit betekent dat meerdere processen tegelijk kunnen werken. Je kan mail in je mail client ontvangen terwijl je met een browser op het internet surft. 
+\clearpage
 
-Binnen een proces kun je ook dingen tegelijk laten gebeuren. Dit gebeurt door in een proces een zogenaamde thread aan te laten maken. 
+Vanuit het perspectief van de software zijn alle cores hetzelfde. Het zijn grofweg gezien individuele op zichzelf staande rekeneenheden die dus totaal onafhankelijk van elkaar rekenwerk kunnen verrichten. Dit betekent dat meerdere processen tegelijk kunnen werken. Je kan mail in je mail client ontvangen terwijl je met een browser op het internet surft. 
 \vspace{1pc}
 
-Een voorbeeld om dit nuttig toe te passen is bijvoorbeeld het optellen van veel getallen. Stel je hebt een rij van 1001 getallen waarvan je de totale som wilt weten. Je kan dit door een enkele rekenkern laten doen. Deze moet dan in zijn eentje 1000 optellingen doen om het antwoord te vinden.
+Binnen een proces kun je ook dingen tegelijk laten gebeuren. Dit gebeurt door in een proces een zogenaamde thread aan te laten maken. Een voorbeeld om dit nuttig toe te passen is bijvoorbeeld het optellen van veel getallen. Stel je hebt een rij van 1001 getallen waarvan je de totale som wilt weten. Je kan dit door een enkele rekenkern laten doen. Deze moet dan in zijn eentje 1000 optellingen doen om het antwoord te vinden.
+
 Als we nu twee rekenkernen nemen en elk de helft van de rij laten optellen dan heb je 499 en 500 optellingen die tegelijk gebeuren en achteraf nog 1 optelling om de deelantwoorden op te tellen en het eindantwoord te vinden. In dit geval hebben we het probleem opgelost in de heflt van de tijd met techniek die praktisch iedereen in huis heeft.
 \vspace{1pc}
 
